@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, if(!S.keys.blockchair) throw new Error('需要 Blockchair API Key（設定頁面填入）');iewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CryptoSentinel">
@@ -878,9 +878,9 @@ async function loadWhales() {
   const chain = S.whaleChain;
   document.getElementById('whale-list').innerHTML = '<div class="card-row" style="justify-content:center;padding:30px"><div class="spinner"></div></div>';
   try {
-    if(!S.keys.blockchair) throw new Error('需要 Blockchair API Key（設定頁面填入）');
     const minBal = chain === 'BTC' ? '100000000000' : '100000000000000000000';
-    const url = `https://api.blockchair.com/${chain==='BTC'?'bitcoin':'ethereum'}/addresses?q=balance(${minBal}..)&s=balance(desc)&limit=100&key=${S.keys.blockchair}`;
+    const keyParam = S.keys.blockchair ? `&key=${S.keys.blockchair}` : '';
+    const url = `https://api.blockchair.com/${chain==='BTC'?'bitcoin':'ethereum'}/addresses?q=balance(${minBal}..)&s=balance(desc)&limit=100${keyParam}`;
     const r = await fetch(url);
     const j = await r.json();
     const data = j.data || [];
@@ -895,7 +895,7 @@ async function loadWhales() {
     }));
     renderWhales();
   } catch(e) {
-    document.getElementById('whale-list').innerHTML = `<div class="empty"><div class="empty-icon">🔑</div><div class="empty-title">無法載入</div><div class="empty-desc">${e.message}</div></div>`;
+    document.getElementById('whale-list').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">載入失敗</div><div class="empty-desc">${e.message}</div></div>`;
   }
   btn.classList.remove('spinning');
 }
