@@ -2,19 +2,18 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, if(!S.keys.blockchair) throw new Error('需要 Blockchair API Key（設定頁面填入）');iewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CryptoSentinel">
 <meta name="theme-color" content="#0a0a0f">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon.svg">
 <title>CryptoSentinel</title>
 <style>
 :root{
   --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--bg4:#22223a;
   --accent:#6c63ff;--accent2:#a78bfa;--green:#00d084;--red:#ff4757;
-  --amber:#ffa502;--text:#e8e8f0;--text2:#9090b0;--text3:#5050708;
+  --amber:#ffa502;--text:#e8e8f0;--text2:#9090b0;
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
   --safe-top:env(safe-area-inset-top);--safe-bottom:env(safe-area-inset-bottom);
   --font-mono:'SF Mono',SFMono-Regular,Consolas,monospace;
@@ -22,13 +21,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;overflow:hidden}
 body{display:flex;flex-direction:column}
-
-/* ── TICKER ── */
-#ticker{
-  padding:8px 16px;padding-top:calc(var(--safe-top) + 8px);
-  background:var(--bg2);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:16px;flex-shrink:0;
-}
+#ticker{padding:8px 16px;padding-top:calc(var(--safe-top) + 8px);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-shrink:0}
 .tick-pair{display:flex;align-items:center;gap:6px}
 .tick-sym{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.06em}
 .tick-price{font-size:13px;font-weight:600;font-family:var(--font-mono)}
@@ -36,1013 +29,662 @@ body{display:flex;flex-direction:column}
 .tick-change.up{color:var(--green)}.tick-change.dn{color:var(--red)}
 .tick-dot{width:6px;height:6px;border-radius:50%;background:var(--green);margin-left:auto;box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-/* ── TABS ── */
-#tabs{
-  display:flex;background:var(--bg2);border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
-.tab-btn{
-  flex:1;padding:12px 4px 10px;text-align:center;border:none;background:none;
-  color:var(--text2);font-size:10px;font-weight:500;cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.03em;
-}
+#tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+.tab-btn{flex:1;padding:12px 4px 10px;text-align:center;border:none;background:none;color:var(--text2);font-size:10px;font-weight:500;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;border-bottom:2px solid transparent;transition:all .2s}
 .tab-btn svg{width:20px;height:20px}
 .tab-btn.active{color:var(--accent2);border-bottom-color:var(--accent)}
-.tab-btn:hover:not(.active){color:var(--text)}
-
-/* ── PAGES ── */
 #pages{flex:1;overflow:hidden;position:relative}
 .page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;padding-bottom:calc(var(--safe-bottom) + 16px)}
 .page.active{display:block}
-
-/* ── SECTION HEADERS ── */
-.sec-hd{
-  padding:20px 16px 10px;display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;background:var(--bg);z-index:10;backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-}
+.sec-hd{padding:16px 16px 8px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:10;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .sec-title{font-size:17px;font-weight:700;letter-spacing:-.02em}
-.sec-sub{font-size:11px;color:var(--text2)}
-.badge{
-  font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.05em;
-}
+.sec-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.05em}
 .badge-purple{background:rgba(108,99,255,.2);color:var(--accent2)}
 .badge-green{background:rgba(0,208,132,.15);color:var(--green)}
 .badge-red{background:rgba(255,71,87,.15);color:var(--red)}
 .badge-amber{background:rgba(255,165,2,.15);color:var(--amber)}
-
-/* ── CARDS ── */
-.card{
-  margin:0 12px 10px;background:var(--bg2);border:1px solid var(--border);
-  border-radius:14px;overflow:hidden;
-}
-.card-row{
-  display:flex;align-items:center;padding:12px 14px;gap:12px;
-  border-bottom:1px solid var(--border);
-}
+.card{margin:0 12px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.card-row{display:flex;align-items:center;padding:12px 14px;gap:12px;border-bottom:1px solid var(--border)}
 .card-row:last-child{border-bottom:none}
-
-/* ── METRICS ROW ── */
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 12px}
 .metric{background:var(--bg3);border-radius:10px;padding:10px 12px}
 .metric-label{font-size:10px;color:var(--text2);margin-bottom:4px;letter-spacing:.04em}
 .metric-val{font-size:14px;font-weight:700;font-family:var(--font-mono)}
-
-/* ── WALLET ROW ── */
-.wallet-icon{
-  width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;
-}
-.wallet-info{flex:1;min-width:0}
-.wallet-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wallet-addr{font-size:10px;font-family:var(--font-mono);color:var(--text2);margin-top:2px}
-.wallet-meta{text-align:right;flex-shrink:0}
-.wallet-bal{font-size:13px;font-weight:600;font-family:var(--font-mono)}
-.wallet-time{font-size:10px;color:var(--text2);margin-top:2px}
-.btc-icon{background:rgba(247,147,26,.15);color:#f7931a}
-.eth-icon{background:rgba(98,126,234,.15);color:#627eea}
-
-/* ── NEWS ROW ── */
-.news-row{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer}
-.news-row:last-child{border-bottom:none}
-.news-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.news-src{font-size:10px;background:var(--bg3);padding:2px 7px;border-radius:20px;color:var(--text2)}
-.news-time{font-size:10px;color:var(--text2);margin-left:auto}
-.news-title{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px}
-.news-snippet{font-size:11px;color:var(--text2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-
-/* ── ORDER BOOK ── */
+.controls{padding:8px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg-ctrl{display:flex;background:var(--bg3);border-radius:10px;padding:3px;flex-shrink:0}
+.seg-btn{padding:6px 14px;border-radius:7px;border:none;background:none;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.seg-btn.active{background:var(--bg4);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.slider-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:120px}
+.slider-wrap label{font-size:11px;color:var(--text2);white-space:nowrap}
+input[type=range]{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--bg4);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent2);cursor:pointer}
+.slider-val{font-size:11px;font-weight:700;color:var(--accent2);min-width:44px;text-align:right}
 .ob-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin:0 12px 10px;border-radius:12px;overflow:hidden}
 .ob-side{background:var(--bg2)}
-.ob-hd{padding:10px 12px;font-size:11px;font-weight:700;letter-spacing:.06em;display:flex;align-items:center;gap:6px}
+.ob-hd{padding:8px 12px;font-size:11px;font-weight:700;letter-spacing:.06em;display:flex;align-items:center;gap:6px}
 .ob-hd.bid-hd{color:var(--green);background:rgba(0,208,132,.06);border-bottom:1px solid var(--border)}
 .ob-hd.ask-hd{color:var(--red);background:rgba(255,71,87,.06);border-bottom:1px solid var(--border);justify-content:flex-end}
-.ob-row{
-  display:flex;padding:5px 10px;font-size:11px;font-family:var(--font-mono);
-  align-items:center;position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.03);
-}
+.ob-row{display:flex;padding:5px 10px;font-size:11px;font-family:var(--font-mono);align-items:center;position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.03)}
 .ob-row:last-child{border-bottom:none}
 .ob-bar{position:absolute;top:0;bottom:0;opacity:.12;pointer-events:none}
-.bid-bar{background:var(--green);left:0}
-.ask-bar{background:var(--red);right:0}
-.ob-price-bid{color:var(--green);font-weight:600}
-.ob-price-ask{color:var(--red);font-weight:600;margin-left:auto}
-.ob-qty{color:var(--text2);margin-left:auto}
-.ob-qty-ask{color:var(--text2);margin-right:auto}
+.bid-bar{background:var(--green);left:0}.ask-bar{background:var(--red);right:0}
+.ob-price-bid{color:var(--green);font-weight:600;font-size:12px}
+.ob-price-ask{color:var(--red);font-weight:600;font-size:12px;margin-left:auto}
+.ob-qty{color:var(--text2);margin-left:auto;font-size:10px}
+.ob-qty-ask{color:var(--text2);margin-right:auto;font-size:10px}
 .whale-ob{background:rgba(255,165,2,.06)}
 .whale-ob .ob-price-bid,.whale-ob .ob-price-ask{color:var(--amber)!important}
-
-/* ── PRESSURE BAR ── */
-.pressure{margin:0 12px 10px;background:var(--bg2);border-radius:10px;padding:12px}
-.pressure-bar-wrap{height:8px;border-radius:4px;overflow:hidden;background:var(--bg4);display:flex;margin:8px 0}
+.pressure{margin:0 12px 8px;background:var(--bg2);border-radius:10px;padding:10px 12px}
+.pressure-bar-wrap{height:8px;border-radius:4px;overflow:hidden;background:var(--bg4);display:flex;margin:6px 0}
 .pressure-bid{background:var(--green);transition:width .5s ease}
 .pressure-ask{background:var(--red);flex:1}
-.pressure-labels{display:flex;justify-content:space-between;font-size:11px}
-.pressure-label-bid{color:var(--green)}
-.pressure-label-ask{color:var(--red)}
 
-/* ── WHALE LIST ── */
-.rank-badge{
-  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;
-  justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;
-  font-family:var(--font-mono);
-}
+/* ALERT CHART */
+.alert-chart-wrap{margin:0 12px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.alert-chart-hd{padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.alert-chart-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.06em}
+.leg-row{display:flex;gap:10px}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+canvas#alertChart{display:block;width:100%}
+
+/* ALERT LIST REDESIGNED */
+.alert-card{margin:0 12px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.alr{display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);gap:10px}
+.alr:last-child{border-bottom:none}
+.alr-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.alr-price{flex:1;min-width:0}
+.alr-price-main{font-size:18px;font-weight:800;font-family:var(--font-mono);letter-spacing:-.02em;line-height:1.1}
+.alr-price-sub{font-size:10px;color:var(--text2);font-family:var(--font-mono);margin-top:2px}
+.alr-right{text-align:right;flex-shrink:0}
+.alr-usd{font-size:14px;font-weight:700;font-family:var(--font-mono)}
+.alr-time{font-size:10px;color:var(--text2);margin-top:2px}
+.alr-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-top:3px;display:inline-block}
+
+/* WALLET CARD REDESIGNED */
+.wcard{margin:0 12px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.wcard-hd{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.wcard-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.wcard-name{font-size:14px;font-weight:700}
+.wcard-addr{font-size:9px;font-family:var(--font-mono);color:var(--text2);margin-top:2px}
+.wbal{padding:14px;border-bottom:1px solid var(--border);background:rgba(108,99,255,.04)}
+.wbal-lbl{font-size:10px;color:var(--text2);letter-spacing:.07em;margin-bottom:6px}
+.wbal-amt{font-size:28px;font-weight:800;font-family:var(--font-mono);letter-spacing:-.03em;line-height:1}
+.wbal-usd{font-size:12px;color:var(--text2);font-family:var(--font-mono);margin-top:5px}
+.wflow-title{padding:8px 14px 2px;font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.07em}
+.wtx{display:flex;align-items:center;gap:8px;padding:8px 14px;border-top:1px solid rgba(255,255,255,.04)}
+.wtx-arrow{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.wtx-in{background:rgba(0,208,132,.12);color:var(--green)}
+.wtx-out{background:rgba(255,71,87,.12);color:var(--red)}
+.wtx-info{flex:1;min-width:0}
+.wtx-hash{font-size:9px;font-family:var(--font-mono);color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wtx-time{font-size:9px;color:var(--text2);margin-top:1px}
+.wtx-amt{font-size:13px;font-weight:700;font-family:var(--font-mono);text-align:right;flex-shrink:0}
+.wtx-amt.in{color:var(--green)}.wtx-amt.out{color:var(--red)}
+.wacts{display:flex;border-top:1px solid var(--border)}
+.wact{flex:1;padding:10px;text-align:center;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;border-right:1px solid var(--border);background:none;border-top:none;border-bottom:none}
+.wact:last-child{border-right:none}
+.wact:active{background:var(--bg3)}
+
+/* WHALE */
+.rank-badge{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;font-family:var(--font-mono)}
 .rank-1{background:rgba(255,215,0,.2);color:gold}
 .rank-2-5{background:rgba(255,165,2,.15);color:var(--amber)}
 .rank-6-20{background:rgba(108,99,255,.15);color:var(--accent2)}
 .rank-rest{background:var(--bg3);color:var(--text2)}
-.whale-info{flex:1;min-width:0}
-.whale-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.whale-addr-sm{font-size:9px;font-family:var(--font-mono);color:var(--text2);margin-top:2px}
-.whale-right{text-align:right;flex-shrink:0}
-.whale-bal{font-size:13px;font-weight:700;font-family:var(--font-mono)}
-.whale-usd{font-size:10px;color:var(--text2);margin-top:2px}
-.whale-pct{font-size:10px;color:var(--text2)}
 
-/* ── CONTROLS ── */
-.controls{padding:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.seg-ctrl{display:flex;background:var(--bg3);border-radius:10px;padding:3px;flex-shrink:0}
-.seg-btn{
-  padding:6px 14px;border-radius:7px;border:none;background:none;color:var(--text2);
-  font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;
-}
-.seg-btn.active{background:var(--bg4);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.3)}
-.slider-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
-.slider-wrap label{font-size:11px;color:var(--text2);white-space:nowrap}
-input[type=range]{
-  flex:1;-webkit-appearance:none;height:4px;border-radius:2px;
-  background:var(--bg4);outline:none;
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
-  background:var(--accent2);cursor:pointer;
-}
-.slider-val{font-size:11px;font-weight:700;color:var(--accent2);min-width:48px;text-align:right}
-
-/* ── SETTINGS ── */
-.settings-section{padding:16px 16px 8px}
-.settings-section-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
-.setting-row{
-  background:var(--bg2);border-radius:10px;margin-bottom:6px;overflow:hidden;
-}
-.setting-item{display:flex;align-items:center;padding:12px 14px;gap:12px;border-bottom:1px solid var(--border)}
-.setting-item:last-child{border-bottom:none}
-.setting-label{font-size:14px;flex:1}
-.setting-val{font-size:12px;color:var(--text2);font-family:var(--font-mono)}
-input[type=text],input[type=password]{
-  background:var(--bg3);border:1px solid var(--border2);border-radius:8px;
-  color:var(--text);padding:10px 12px;font-size:13px;font-family:var(--font-mono);
-  width:100%;outline:none;-webkit-appearance:none;
-}
+/* SETTINGS */
+.set-sec{padding:14px 16px 6px}
+.set-sec-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.set-row{background:var(--bg2);border-radius:10px;margin-bottom:6px;overflow:hidden}
+.set-item{display:flex;align-items:center;padding:12px 14px;gap:12px;border-bottom:1px solid var(--border)}
+.set-item:last-child{border-bottom:none}
+.set-label{font-size:14px;flex:1}
+input[type=text],input[type=password]{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);padding:10px 12px;font-size:13px;font-family:var(--font-mono);width:100%;outline:none;-webkit-appearance:none}
 input[type=text]:focus,input[type=password]:focus{border-color:var(--accent)}
-.setting-input-wrap{padding:8px 14px}
-
-/* ── ALERT LOG ── */
-.alert-row{
-  padding:10px 14px;border-bottom:1px solid var(--border);display:flex;
-  align-items:center;gap:10px;
-}
-.alert-row:last-child{border-bottom:none}
-.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.alert-body{flex:1;min-width:0}
-.alert-title{font-size:12px;font-weight:600}
-.alert-sub{font-size:10px;color:var(--text2);font-family:var(--font-mono);margin-top:2px}
-.alert-right{text-align:right;flex-shrink:0}
-.alert-val{font-size:13px;font-weight:700;font-family:var(--font-mono)}
-.alert-time{font-size:10px;color:var(--text2);margin-top:2px}
-
-/* ── EMPTY STATE ── */
-.empty{padding:40px 20px;text-align:center;color:var(--text2)}
-.empty-icon{font-size:40px;margin-bottom:12px;opacity:.5}
+.refresh-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.refresh-btn svg{width:16px;height:16px;color:var(--text2);stroke:currentColor}
+.refresh-btn.spinning svg{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+.empty{padding:36px 20px;text-align:center;color:var(--text2)}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:.5}
 .empty-title{font-size:15px;font-weight:600;margin-bottom:6px;color:var(--text)}
 .empty-desc{font-size:12px;line-height:1.5}
-
-/* ── LOADING ── */
-.spinner{
-  width:20px;height:20px;border:2px solid var(--border);
-  border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── COPY FEEDBACK ── */
-.copy-toast{
-  position:fixed;bottom:calc(var(--safe-bottom) + 80px);left:50%;transform:translateX(-50%);
-  background:var(--bg3);border:1px solid var(--border2);color:var(--green);
-  padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;
-  opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;
-}
+.copy-toast{position:fixed;bottom:calc(var(--safe-bottom) + 80px);left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);color:var(--green);padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
 .copy-toast.show{opacity:1}
-
-/* ── REFRESH BTN ── */
-.refresh-btn{
-  width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:var(--bg3);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-}
-.refresh-btn svg{width:16px;height:16px;color:var(--text2)}
-.refresh-btn.spinning svg{animation:spin .7s linear infinite}
-
-/* ── ACTIVITY STREAM ── */
-.act-row{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
-.act-row:last-child{border-bottom:none}
-.act-arrow{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.act-in{background:rgba(0,208,132,.12);color:var(--green)}
-.act-out{background:rgba(255,71,87,.12);color:var(--red)}
-.act-body{flex:1}
-.act-name{font-size:13px;font-weight:600}
-.act-hash{font-size:10px;font-family:var(--font-mono);color:var(--text2);margin-top:2px}
-.act-right{text-align:right}
-.act-amount{font-size:12px;font-weight:700;font-family:var(--font-mono)}
-.act-time{font-size:10px;color:var(--text2);margin-top:2px}
-
-/* scrollbar */
 ::-webkit-scrollbar{width:0}
 </style>
 </head>
 <body>
-
-<!-- ── PRICE TICKER ── -->
 <div id="ticker">
-  <div class="tick-pair">
-    <span class="tick-sym">BTC</span>
-    <span class="tick-price" id="btc-price">---</span>
-    <span class="tick-change" id="btc-change">---</span>
-  </div>
-  <div class="tick-pair">
-    <span class="tick-sym">ETH</span>
-    <span class="tick-price" id="eth-price">---</span>
-    <span class="tick-change" id="eth-change">---</span>
-  </div>
-  <div class="tick-dot" id="ws-dot" title="WebSocket 狀態"></div>
+  <div class="tick-pair"><span class="tick-sym">BTC</span><span class="tick-price" id="btc-price">---</span><span class="tick-change" id="btc-change"></span></div>
+  <div class="tick-pair"><span class="tick-sym">ETH</span><span class="tick-price" id="eth-price">---</span><span class="tick-change" id="eth-change"></span></div>
+  <div class="tick-dot" id="ws-dot"></div>
 </div>
-
-<!-- ── TAB BAR ── -->
 <div id="tabs">
-  <button class="tab-btn active" onclick="switchTab(0)" id="tab0">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-    </svg>
-    監控
-  </button>
-  <button class="tab-btn" onclick="switchTab(1)" id="tab1">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-    </svg>
-    鯨魚
-  </button>
-  <button class="tab-btn" onclick="switchTab(2)" id="tab2">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
-    </svg>
-    掛單牆
-  </button>
-  <button class="tab-btn" onclick="switchTab(3)" id="tab3">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93M22 12h-2M4 12H2M12 22v-2M12 4V2"/>
-    </svg>
-    設定
-  </button>
+  <button class="tab-btn active" onclick="switchTab(0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>監控</button>
+  <button class="tab-btn" onclick="switchTab(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>鯨魚</button>
+  <button class="tab-btn" onclick="switchTab(2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>掛單牆</button>
+  <button class="tab-btn" onclick="switchTab(3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93M22 12h-2M4 12H2M12 22v-2M12 4V2"/></svg>設定</button>
 </div>
-
-<!-- ── PAGES ── -->
 <div id="pages">
 
-  <!-- PAGE 0: TRUMP MONITOR -->
-  <div class="page active" id="page0">
-    <div class="sec-hd">
-      <div>
-        <div class="sec-title">政治人物監控</div>
-        <div class="sec-sub">Trump Jr 關聯錢包 &amp; 新聞</div>
+<!-- PAGE 0 -->
+<div class="page active" id="page0">
+  <div class="sec-hd">
+    <div><div class="sec-title">政治人物監控</div><div class="sec-sub">Trump Jr 關聯錢包</div></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="seg-ctrl">
+        <button class="seg-btn active" onclick="trumpTab('wallets')">錢包</button>
+        <button class="seg-btn" onclick="trumpTab('news')">新聞</button>
       </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div class="seg-ctrl">
-          <button class="seg-btn active" onclick="trumpTab('wallets')">錢包</button>
-          <button class="seg-btn" onclick="trumpTab('news')">新聞</button>
-          <button class="seg-btn" onclick="trumpTab('activity')">動向</button>
-        </div>
-        <button class="refresh-btn" id="trump-refresh" onclick="loadTrumpData()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-          </svg>
-        </button>
-      </div>
+      <button class="refresh-btn" id="trump-refresh" onclick="loadTrumpData()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
     </div>
+  </div>
+  <div id="trump-wallets"><div id="trump-wallet-list" style="padding-top:4px"><div class="card"><div class="card-row" style="justify-content:center"><div class="spinner"></div></div></div></div></div>
+  <div id="trump-news" style="display:none"><div class="card" id="trump-news-list"><div class="card-row" style="justify-content:center"><div class="spinner"></div></div></div></div>
+</div>
 
-    <div id="trump-wallets">
-      <div class="card" id="trump-wallet-list">
-        <div class="card-row" style="justify-content:center"><div class="spinner"></div></div>
-      </div>
-    </div>
+<!-- PAGE 1 -->
+<div class="page" id="page1">
+  <div class="sec-hd">
+    <div><div class="sec-title">前 100 大鯨魚</div><div class="sec-sub" id="whale-subtitle">載入中...</div></div>
+    <button class="refresh-btn" id="whale-refresh" onclick="loadWhales()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+  </div>
+  <div class="controls"><div class="seg-ctrl"><button class="seg-btn active" onclick="whaleChain('BTC')">BTC</button><button class="seg-btn" onclick="whaleChain('ETH')">ETH</button></div></div>
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">TOP 100 持倉</div><div class="metric-val" id="wm-total">---</div></div>
+    <div class="metric"><div class="metric-label">佔供應量</div><div class="metric-val" id="wm-pct" style="color:var(--amber)">---</div></div>
+    <div class="metric"><div class="metric-label">美元估值</div><div class="metric-val" id="wm-usd">---</div></div>
+  </div>
+  <div class="card" id="whale-list"><div class="card-row" style="justify-content:center;padding:30px"><div class="spinner"></div></div></div>
+</div>
 
-    <div id="trump-news" style="display:none">
-      <div class="card" id="trump-news-list">
-        <div class="card-row" style="justify-content:center"><div class="spinner"></div></div>
-      </div>
-    </div>
-
-    <div id="trump-activity" style="display:none">
-      <div class="card" id="trump-act-list">
-        <div class="empty">
-          <div class="empty-icon">📡</div>
-          <div class="empty-title">偵測中</div>
-          <div class="empty-desc">新增錢包後，偵測到新交易<br>將自動出現在此</div>
-        </div>
-      </div>
+<!-- PAGE 2 -->
+<div class="page" id="page2">
+  <div class="sec-hd">
+    <div><div class="sec-title">大額掛單牆</div><div class="sec-sub" id="ob-status">連線中...</div></div>
+    <div class="seg-ctrl"><button class="seg-btn active" onclick="obChain('BTC')">BTC</button><button class="seg-btn" onclick="obChain('ETH')">ETH</button></div>
+  </div>
+  <div class="controls">
+    <div class="seg-ctrl"><button class="seg-btn active" onclick="obView('book')">買賣牆</button><button class="seg-btn" onclick="obView('alerts')">大單時序</button></div>
+    <div class="slider-wrap">
+      <label>門檻</label>
+      <input type="range" id="thr-slider" min="90" max="2000" value="90" step="5" oninput="updateThr(this.value)">
+      <span class="slider-val" id="thr-label">$90K</span>
     </div>
   </div>
 
-  <!-- PAGE 1: WHALE TRACKER -->
-  <div class="page" id="page1">
-    <div class="sec-hd">
-      <div>
-        <div class="sec-title">前 100 大鯨魚</div>
-        <div class="sec-sub" id="whale-subtitle">載入中...</div>
-      </div>
-      <button class="refresh-btn" id="whale-refresh" onclick="loadWhales()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-        </svg>
-      </button>
+  <div id="ob-book-view">
+    <div class="pressure">
+      <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--green)" id="bid-wall-val">買壓 ---</span><span style="color:var(--red)" id="ask-wall-val">賣壓 ---</span></div>
+      <div class="pressure-bar-wrap"><div class="pressure-bid" id="pressure-bid" style="width:50%"></div><div class="pressure-ask"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2)"><span id="ob-bid-top">最高買: ---</span><span id="ob-spread">價差: ---</span><span id="ob-ask-top">最低賣: ---</span></div>
     </div>
-
-    <div class="controls">
-      <div class="seg-ctrl">
-        <button class="seg-btn active" onclick="whaleChain('BTC')">BTC</button>
-        <button class="seg-btn" onclick="whaleChain('ETH')">ETH</button>
-      </div>
-    </div>
-
-    <div class="metrics" id="whale-metrics">
-      <div class="metric"><div class="metric-label">總持倉</div><div class="metric-val" id="wm-total">---</div></div>
-      <div class="metric"><div class="metric-label">佔供應量</div><div class="metric-val" id="wm-pct" style="color:var(--amber)">---</div></div>
-      <div class="metric"><div class="metric-label">估值</div><div class="metric-val" id="wm-usd">---</div></div>
-    </div>
-
-    <div class="card" id="whale-list">
-      <div class="card-row" style="justify-content:center;padding:30px"><div class="spinner"></div></div>
+    <div class="ob-wrap">
+      <div class="ob-side"><div class="ob-hd bid-hd">▲ 買牆 <span id="bid-count" class="badge badge-green" style="margin-left:auto">0</span></div><div id="bid-rows"></div></div>
+      <div class="ob-side"><div class="ob-hd ask-hd"><span id="ask-count" class="badge badge-red">0</span> 賣牆 ▼</div><div id="ask-rows"></div></div>
     </div>
   </div>
 
-  <!-- PAGE 2: ORDER BOOK -->
-  <div class="page" id="page2">
-    <div class="sec-hd">
-      <div>
-        <div class="sec-title">大額掛單牆</div>
-        <div class="sec-sub" id="ob-status">連線中...</div>
+  <div id="ob-alerts-view" style="display:none">
+    <div class="alert-chart-wrap">
+      <div class="alert-chart-hd">
+        <span class="alert-chart-title">大單價位時序（近10分鐘）</span>
+        <div class="leg-row">
+          <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>買單</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>賣單</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div>鯨魚</div>
+        </div>
       </div>
-      <div class="seg-ctrl">
-        <button class="seg-btn active" onclick="obChain('BTC')">BTC</button>
-        <button class="seg-btn" onclick="obChain('ETH')">ETH</button>
-      </div>
+      <canvas id="alertChart" height="160"></canvas>
     </div>
-
-    <div class="controls">
-      <div class="seg-ctrl">
-        <button class="seg-btn active" onclick="obView('book')">買賣牆</button>
-        <button class="seg-btn" onclick="obView('alerts')">警報</button>
-      </div>
-      <div class="slider-wrap">
-        <label>門檻</label>
-        <input type="range" id="threshold-slider" min="100" max="5000" value="500" step="100" oninput="updateThreshold(this.value)">
-        <span class="slider-val" id="threshold-label">$500K</span>
-      </div>
-    </div>
-
-    <div id="ob-book-view">
-      <div class="pressure" id="ob-pressure">
-        <div class="pressure-labels">
-          <span class="pressure-label-bid" id="bid-wall-val">買壓 ---</span>
-          <span class="pressure-label-ask" id="ask-wall-val">賣壓 ---</span>
-        </div>
-        <div class="pressure-bar-wrap">
-          <div class="pressure-bid" id="pressure-bid" style="width:50%"></div>
-          <div class="pressure-ask"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2)">
-          <span id="ob-bid-top">最高買: ---</span>
-          <span id="ob-spread">價差: ---</span>
-          <span id="ob-ask-top">最低賣: ---</span>
-        </div>
-      </div>
-
-      <div class="ob-wrap" id="ob-grid">
-        <div class="ob-side">
-          <div class="ob-hd bid-hd">
-            <span>▲</span>買牆 <span id="bid-count" class="badge badge-green" style="margin-left:auto">0</span>
-          </div>
-          <div id="bid-rows"></div>
-        </div>
-        <div class="ob-side">
-          <div class="ob-hd ask-hd">
-            <span id="ask-count" class="badge badge-red">0</span> 賣牆<span>▼</span>
-          </div>
-          <div id="ask-rows"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="ob-alerts-view" style="display:none">
-      <div class="card" id="ob-alert-list">
-        <div class="empty">
-          <div class="empty-icon">🐋</div>
-          <div class="empty-title">等待鯨魚出現</div>
-          <div class="empty-desc">超過門檻值的大額掛單<br>將自動記錄在此</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PAGE 3: SETTINGS -->
-  <div class="page" id="page3">
-    <div class="sec-hd">
-      <div class="sec-title">設定</div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">API 金鑰（存於本機）</div>
-      <div class="setting-row">
-        <div class="setting-item" style="flex-direction:column;align-items:flex-start;gap:6px">
-          <span class="setting-label" style="font-size:12px;color:var(--text2)">Blockchair API Key</span>
-          <span style="font-size:10px;color:var(--text2)">BTC/ETH 前100大排行 → blockchair.com/api</span>
-          <div class="setting-input-wrap" style="padding:0;width:100%">
-            <input type="password" id="s-blockchair" placeholder="填入後啟用排行功能" oninput="saveKey('blockchair',this.value)">
-          </div>
-        </div>
-        <div class="setting-item" style="flex-direction:column;align-items:flex-start;gap:6px">
-          <span class="setting-label" style="font-size:12px;color:var(--text2)">Etherscan API Key</span>
-          <span style="font-size:10px;color:var(--text2)">ETH 錢包查詢 → etherscan.io/apis</span>
-          <div class="setting-input-wrap" style="padding:0;width:100%">
-            <input type="password" id="s-etherscan" placeholder="免費申請" oninput="saveKey('etherscan',this.value)">
-          </div>
-        </div>
-        <div class="setting-item" style="flex-direction:column;align-items:flex-start;gap:6px">
-          <span class="setting-label" style="font-size:12px;color:var(--text2)">NewsAPI Key</span>
-          <span style="font-size:10px;color:var(--text2)">Trump Jr 新聞 → newsapi.org</span>
-          <div class="setting-input-wrap" style="padding:0;width:100%">
-            <input type="password" id="s-newsapi" placeholder="免費申請" oninput="saveKey('newsapi',this.value)">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">自訂監控錢包</div>
-      <div class="setting-row">
-        <div class="setting-item" style="flex-direction:column;align-items:flex-start;gap:6px">
-          <input type="text" id="s-addr" placeholder="錢包地址 (BTC 或 ETH)" style="margin-bottom:6px">
-          <input type="text" id="s-label" placeholder="自訂標籤（可選）">
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <div class="seg-ctrl">
-              <button class="seg-btn active" id="add-btc-btn" onclick="setAddChain('BTC')">BTC</button>
-              <button class="seg-btn" id="add-eth-btn" onclick="setAddChain('ETH')">ETH</button>
-            </div>
-            <button onclick="addCustomWallet()" style="flex:1;padding:8px 16px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:13px;cursor:pointer">
-              新增監控
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">資料來源 &amp; 工具</div>
-      <div class="setting-row">
-        <a href="https://platform.arkm.com" target="_blank" class="setting-item" style="text-decoration:none;color:inherit">
-          <span class="setting-label">Arkham Intelligence</span>
-          <span class="badge badge-purple">推薦</span>
-        </a>
-        <a href="https://blockchair.com/api/docs" target="_blank" class="setting-item" style="text-decoration:none;color:inherit">
-          <span class="setting-label">Blockchair API 文件</span>
-          <span style="color:var(--text2);font-size:12px">↗</span>
-        </a>
-        <a href="https://etherscan.io/apis" target="_blank" class="setting-item" style="text-decoration:none;color:inherit">
-          <span class="setting-label">Etherscan API</span>
-          <span style="color:var(--text2);font-size:12px">↗</span>
-        </a>
-        <a href="https://newsapi.org" target="_blank" class="setting-item" style="text-decoration:none;color:inherit">
-          <span class="setting-label">NewsAPI</span>
-          <span style="color:var(--text2);font-size:12px">↗</span>
-        </a>
-        <a href="https://whale-alert.io" target="_blank" class="setting-item" style="text-decoration:none;color:inherit">
-          <span class="setting-label">Whale Alert</span>
-          <span style="color:var(--text2);font-size:12px">↗</span>
-        </a>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">關於</div>
-      <div class="setting-row">
-        <div class="setting-item"><span class="setting-label">版本</span><span class="setting-val">1.0.0</span></div>
-        <div class="setting-item"><span class="setting-label">掛單資料</span><span class="setting-val">Binance WS 即時</span></div>
-        <div class="setting-item"><span class="setting-label">價格更新</span><span class="setting-val">30 秒</span></div>
-        <div class="setting-item"><span class="setting-label">資料儲存</span><span class="setting-val">本機 localStorage</span></div>
-      </div>
+    <div class="alert-card" id="ob-alert-list">
+      <div class="empty"><div class="empty-icon">🐋</div><div class="empty-title">等待大額掛單</div><div class="empty-desc">超過門檻的掛單將即時出現</div></div>
     </div>
   </div>
 </div>
 
+<!-- PAGE 3 -->
+<div class="page" id="page3">
+  <div class="sec-hd"><div class="sec-title">設定</div></div>
+  <div class="set-sec">
+    <div class="set-sec-title">API 金鑰</div>
+    <div class="set-row">
+      <div class="set-item" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <span style="font-size:12px;color:var(--text2)">Blockchair <span class="badge badge-amber">不需要Key也能用</span></span>
+        <input type="password" id="s-blockchair" placeholder="選填，blockchair.com/api" oninput="saveKey('blockchair',this.value)">
+      </div>
+      <div class="set-item" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <span style="font-size:12px;color:var(--text2)">Etherscan（ETH 錢包餘額+金流）</span>
+        <input type="password" id="s-etherscan" placeholder="etherscan.io/apis 免費" oninput="saveKey('etherscan',this.value)">
+      </div>
+      <div class="set-item" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <span style="font-size:12px;color:var(--text2)">NewsAPI（新聞追蹤）</span>
+        <input type="password" id="s-newsapi" placeholder="newsapi.org 免費" oninput="saveKey('newsapi',this.value)">
+      </div>
+    </div>
+  </div>
+  <div class="set-sec">
+    <div class="set-sec-title">新增監控錢包</div>
+    <div class="set-row">
+      <div class="set-item" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <input type="text" id="s-addr" placeholder="錢包地址 (BTC 或 ETH)" style="margin-bottom:6px">
+        <input type="text" id="s-label" placeholder="自訂標籤（選填）">
+        <div style="display:flex;gap:8px;margin-top:6px;width:100%">
+          <div class="seg-ctrl"><button class="seg-btn active" id="add-btc-btn" onclick="setAddChain('BTC')">BTC</button><button class="seg-btn" id="add-eth-btn" onclick="setAddChain('ETH')">ETH</button></div>
+          <button onclick="addWallet()" style="flex:1;padding:8px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:13px;cursor:pointer">新增監控</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="set-sec">
+    <div class="set-sec-title">前100大鯨魚資料來源</div>
+    <div class="set-row">
+      <div class="set-item" style="flex-direction:column;align-items:flex-start;gap:4px">
+        <span style="font-size:12px;font-weight:600">目前：Blockchair API（無Key每天1440次）</span>
+        <span style="font-size:11px;color:var(--text2);line-height:1.5">每次點刷新才更新，不自動輪詢以節省配額。點擊任何地址可跳轉鏈上瀏覽器。</span>
+      </div>
+      <a href="https://platform.arkm.com" target="_blank" class="set-item" style="text-decoration:none;color:inherit"><span class="set-label">Arkham Intelligence（身份標籤最完整）</span><span class="badge badge-purple">推薦</span></a>
+      <a href="https://bitinfocharts.com/top-100-richest-bitcoin-addresses.html" target="_blank" class="set-item" style="text-decoration:none;color:inherit"><span class="set-label">BitInfoCharts BTC Top 100</span><span style="color:var(--text2)">↗</span></a>
+      <a href="https://etherscan.io/accounts" target="_blank" class="set-item" style="text-decoration:none;color:inherit"><span class="set-label">Etherscan ETH 帳戶排行</span><span style="color:var(--text2)">↗</span></a>
+    </div>
+  </div>
+  <div class="set-sec">
+    <div class="set-sec-title">關於</div>
+    <div class="set-row">
+      <div class="set-item"><span class="set-label">版本</span><span style="font-size:12px;color:var(--text2);font-family:var(--font-mono)">2.0.0</span></div>
+      <div class="set-item"><span class="set-label">掛單 WebSocket</span><span style="font-size:12px;color:var(--text2)">Binance 即時</span></div>
+      <div class="set-item"><span class="set-label">資料儲存</span><span style="font-size:12px;color:var(--text2)">本機 localStorage</span></div>
+    </div>
+  </div>
+</div>
+</div>
 <div class="copy-toast" id="copy-toast">已複製</div>
-
 <script>
-// ═══════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════
-const S = {
-  keys: { blockchair:'', etherscan:'', newsapi:'' },
-  wallets: [],
-  whales: { BTC:[], ETH:[] },
-  prices: { BTC:0, ETH:0, BTC24h:0, ETH24h:0 },
-  ob: { BTC:{ bids:[], asks:[] }, ETH:{ bids:[], asks:[] } },
-  ws: null,
-  obAlerts: [],
-  activities: [],
-  obChain: 'BTC',
-  whaleChain: 'BTC',
-  threshold: 500000,
-  addChain: 'BTC',
-  trumpSubTab: 'wallets',
-  obView: 'book',
+const S={
+  keys:{blockchair:'',etherscan:'',newsapi:''},
+  wallets:[],whales:{BTC:[],ETH:[]},
+  prices:{BTC:0,ETH:0,BTC24h:0,ETH24h:0},
+  ob:{BTC:{bids:[],asks:[]},ETH:{bids:[],asks:[]}},
+  ws:null,obAlerts:[],
+  obChain:'BTC',whaleChain:'BTC',
+  thr:{BTC:90000,ETH:75000},
+  addChain:'BTC',obViewMode:'book',
 };
 
-// ═══════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════
-function init() {
-  // Load from localStorage
-  ['blockchair','etherscan','newsapi'].forEach(k => {
-    S.keys[k] = ls('key_'+k) || '';
-    const el = document.getElementById('s-'+k);
-    if(el && S.keys[k]) el.value = S.keys[k];
+function init(){
+  ['blockchair','etherscan','newsapi'].forEach(k=>{
+    S.keys[k]=ls('key_'+k)||'';
+    const el=document.getElementById('s-'+k);
+    if(el&&S.keys[k]) el.value=S.keys[k];
   });
-  S.wallets = JSON.parse(ls('wallets') || '[]');
-
-  // Built-in Trump Jr known wallets (from public reports)
-  const builtIn = [
-    { address:'0x8b07F35c46Cb2C64B3a4B44BfD1E26B3c8A72e9F', label:'Trump Jr. (報導)', chain:'ETH', builtin:true },
-    { address:'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', label:'American Bitcoin Corp', chain:'BTC', builtin:true },
-    { address:'0xF977814e90dA44bFA03b6295A0616a897441aCec', label:'Binance 8 (觀察)', chain:'ETH', builtin:true },
-  ];
-  builtIn.forEach(w => {
-    if(!S.wallets.find(v => v.address === w.address)) S.wallets.push(w);
-  });
-
-  fetchPrices();
-  setInterval(fetchPrices, 30000);
-  connectOrderBook();
-  loadTrumpData();
-  loadWhales();
-  renderWallets();
+  S.wallets=JSON.parse(ls('wallets')||'[]');
+  [{address:'0x8b07F35c46Cb2C64B3a4B44BfD1E26B3c8A72e9F',label:'Trump Jr. (報導關聯)',chain:'ETH',builtin:true},
+   {address:'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',label:'American Bitcoin Corp',chain:'BTC',builtin:true}
+  ].forEach(w=>{ if(!S.wallets.find(v=>v.address===w.address)) S.wallets.push(w); });
+  updateSlider('BTC');
+  fetchPrices();setInterval(fetchPrices,30000);
+  connectWS();loadTrumpData();renderWallets();
 }
 
-// ═══════════════════════════════════════════════════════
-// TABS
-// ═══════════════════════════════════════════════════════
-function switchTab(i) {
-  document.querySelectorAll('.tab-btn').forEach((b,j) => b.classList.toggle('active', i===j));
-  document.querySelectorAll('.page').forEach((p,j) => p.classList.toggle('active', i===j));
+function switchTab(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',i===j));
+  document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',i===j));
+  if(i===2&&S.obViewMode==='alerts') setTimeout(drawChart,100);
+}
+function trumpTab(t){
+  ['wallets','news'].forEach(v=>document.getElementById('trump-'+v).style.display=v===t?'':'none');
+  document.querySelectorAll('#page0 .seg-btn').forEach((b,i)=>b.classList.toggle('active',['wallets','news'][i]===t));
+  if(t==='news') loadNews();
+}
+function obView(v){
+  S.obViewMode=v;
+  document.getElementById('ob-book-view').style.display=v==='book'?'':'none';
+  document.getElementById('ob-alerts-view').style.display=v==='alerts'?'':'none';
+  document.querySelectorAll('#page2 .controls .seg-btn').forEach((b,i)=>b.classList.toggle('active',['book','alerts'][i]===v));
+  if(v==='alerts') setTimeout(drawChart,50);
 }
 
-function trumpTab(t) {
-  S.trumpSubTab = t;
-  ['wallets','news','activity'].forEach(v => {
-    document.getElementById('trump-'+v).style.display = v===t ? '' : 'none';
-  });
-  document.querySelectorAll('#page0 .seg-btn').forEach((b,i) => {
-    b.classList.toggle('active', ['wallets','news','activity'][i] === t);
-  });
-}
-
-function obView(v) {
-  S.obView = v;
-  document.getElementById('ob-book-view').style.display = v==='book' ? '' : 'none';
-  document.getElementById('ob-alerts-view').style.display = v==='alerts' ? '' : 'none';
-  document.querySelectorAll('#page2 .controls .seg-btn').forEach((b,i) => {
-    b.classList.toggle('active', ['book','alerts'][i] === v);
-  });
-}
-
-// ═══════════════════════════════════════════════════════
-// PRICES
-// ═══════════════════════════════════════════════════════
-async function fetchPrices() {
-  try {
-    const r = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=["BTCUSDT","ETHUSDT"]');
-    const data = await r.json();
-    data.forEach(d => {
-      const sym = d.symbol.replace('USDT','');
-      S.prices[sym] = parseFloat(d.lastPrice);
-      S.prices[sym+'24h'] = parseFloat(d.priceChangePercent);
+async function fetchPrices(){
+  try{
+    const r=await fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=["BTCUSDT","ETHUSDT"]');
+    const d=await r.json();
+    d.forEach(x=>{const s=x.symbol.replace('USDT','');S.prices[s]=+x.lastPrice;S.prices[s+'24h']=+x.priceChangePercent;});
+    const f=n=>n>=10000?n.toFixed(0):n.toFixed(2);
+    document.getElementById('btc-price').textContent='$'+f(S.prices.BTC);
+    document.getElementById('eth-price').textContent='$'+f(S.prices.ETH);
+    ['BTC','ETH'].forEach(s=>{
+      const el=document.getElementById(s.toLowerCase()+'-change'),c=S.prices[s+'24h'];
+      el.textContent=(c>=0?'+':'')+c.toFixed(2)+'%';el.className='tick-change '+(c>=0?'up':'dn');
     });
-    renderPrices();
-  } catch(e) { console.warn('price fetch failed', e); }
+  }catch(e){}
 }
 
-function renderPrices() {
-  const fmt = n => n >= 10000 ? n.toFixed(0) : n.toFixed(2);
-  document.getElementById('btc-price').textContent = '$'+fmt(S.prices.BTC);
-  document.getElementById('eth-price').textContent = '$'+fmt(S.prices.ETH);
-  const btcC = document.getElementById('btc-change');
-  const ethC = document.getElementById('eth-change');
-  btcC.textContent = (S.prices.BTC24h>=0?'+':'')+S.prices.BTC24h.toFixed(2)+'%';
-  ethC.textContent = (S.prices.ETH24h>=0?'+':'')+S.prices.ETH24h.toFixed(2)+'%';
-  btcC.className = 'tick-change '+(S.prices.BTC24h>=0?'up':'dn');
-  ethC.className = 'tick-change '+(S.prices.ETH24h>=0?'up':'dn');
-}
-
-// ═══════════════════════════════════════════════════════
-// WEBSOCKET ORDER BOOK
-// ═══════════════════════════════════════════════════════
-function connectOrderBook() {
-  const streams = 'btcusdt@depth20@100ms/ethusdt@depth20@100ms';
-  const url = `wss://stream.binance.com:9443/stream?streams=${streams}`;
-  S.ws = new WebSocket(url);
-
-  S.ws.onopen = () => {
-    document.getElementById('ws-dot').style.background = 'var(--green)';
-    document.getElementById('ws-dot').style.boxShadow = '0 0 6px var(--green)';
-    document.getElementById('ob-status').textContent = '即時連線中';
-  };
-
-  S.ws.onclose = () => {
-    document.getElementById('ws-dot').style.background = 'var(--red)';
-    document.getElementById('ws-dot').style.boxShadow = '0 0 6px var(--red)';
-    document.getElementById('ob-status').textContent = '重連中...';
-    setTimeout(connectOrderBook, 3000);
-  };
-
-  S.ws.onmessage = e => {
-    const msg = JSON.parse(e.data);
-    const stream = msg.stream || '';
-    const chain = stream.startsWith('btc') ? 'BTC' : 'ETH';
-    const d = msg.data;
-    if(!d) return;
-    const price = S.prices[chain];
-
-    S.ob[chain].bids = (d.bids||[]).map(([p,q]) => ({
-      price: parseFloat(p), qty: parseFloat(q),
-      total: parseFloat(p) * parseFloat(q)
-    })).filter(x => x.total >= S.threshold);
-
-    S.ob[chain].asks = (d.asks||[]).map(([p,q]) => ({
-      price: parseFloat(p), qty: parseFloat(q),
-      total: parseFloat(p) * parseFloat(q)
-    })).filter(x => x.total >= S.threshold);
-
-    // Whale alert logging
-    const whaleThreshold = S.threshold * 3;
-    [...S.ob[chain].bids, ...S.ob[chain].asks].forEach(entry => {
-      if(entry.total >= whaleThreshold) {
-        const existing = S.obAlerts.find(a =>
-          Math.abs(a.price - entry.price) < 0.01 && a.chain === chain &&
-          Date.now() - a.ts < 60000
-        );
-        if(!existing) {
-          S.obAlerts.unshift({ ...entry, chain, side: entry.price > (S.ob[chain].asks[0]?.price||0) ? 'bid':'ask', ts: Date.now() });
-          if(S.obAlerts.length > 100) S.obAlerts.pop();
-          renderObAlerts();
+function connectWS(){
+  S.ws=new WebSocket('wss://stream.binance.com:9443/stream?streams=btcusdt@depth20@100ms/ethusdt@depth20@100ms');
+  S.ws.onopen=()=>{dot('var(--green)');document.getElementById('ob-status').textContent='即時連線中';};
+  S.ws.onclose=()=>{dot('var(--red)');document.getElementById('ob-status').textContent='重連中...';setTimeout(connectWS,3000);};
+  S.ws.onmessage=e=>{
+    const msg=JSON.parse(e.data);
+    const chain=msg.stream?.startsWith('btc')?'BTC':'ETH';
+    const d=msg.data;if(!d) return;
+    const thr=S.thr[chain];
+    S.ob[chain].bids=(d.bids||[]).map(([p,q])=>({price:+p,qty:+q,total:+p*+q})).filter(x=>x.total>=thr);
+    S.ob[chain].asks=(d.asks||[]).map(([p,q])=>({price:+p,qty:+q,total:+p*+q})).filter(x=>x.total>=thr);
+    const wThr=thr*3;
+    [...S.ob[chain].bids,...S.ob[chain].asks].forEach(x=>{
+      if(x.total>=wThr){
+        const dup=S.obAlerts.find(a=>a.chain===chain&&Math.abs(a.price-x.price)<1&&Date.now()-a.ts<20000);
+        if(!dup){
+          S.obAlerts.unshift({...x,chain,side:x.price>(S.ob[chain].asks[0]?.price||Infinity)?'bid':'ask',ts:Date.now()});
+          if(S.obAlerts.length>200) S.obAlerts.pop();
+          renderAlerts();if(S.obViewMode==='alerts') drawChart();
         }
       }
     });
-
-    if(chain === S.obChain) renderOrderBook();
+    if(chain===S.obChain) renderOB();
   };
 }
+function dot(c){const el=document.getElementById('ws-dot');el.style.background=c;el.style.boxShadow='0 0 6px '+c;}
 
-function renderOrderBook() {
-  const ob = S.ob[S.obChain];
-  const maxBidTotal = Math.max(...ob.bids.map(x=>x.total), 1);
-  const maxAskTotal = Math.max(...ob.asks.map(x=>x.total), 1);
-
-  const bidHTML = ob.bids.slice(0,20).map(b => {
-    const w = (b.total/maxBidTotal*100).toFixed(1);
-    const whale = b.total >= S.threshold*3;
-    return `<div class="ob-row${whale?' whale-ob':''}">
-      <div class="ob-bar bid-bar" style="width:${w}%"></div>
-      <span class="ob-price-bid">${b.price.toFixed(2)}</span>
-      <span class="ob-qty">${fmtQty(b.qty,S.obChain)}</span>
+function renderOB(){
+  const ob=S.ob[S.obChain],thr=S.thr[S.obChain];
+  const maxB=Math.max(...ob.bids.map(x=>x.total),1),maxA=Math.max(...ob.asks.map(x=>x.total),1);
+  const row=(entry,side)=>{
+    const isB=side==='bid',w=(entry.total/(isB?maxB:maxA)*100).toFixed(0),wh=entry.total>=thr*3;
+    return`<div class="ob-row${wh?' whale-ob':''}">
+      ${isB?`<div class="ob-bar bid-bar" style="width:${w}%"></div><span class="ob-price-bid">$${entry.price.toFixed(2)}</span><span class="ob-qty">${fQ(entry.qty,S.obChain)}</span>`
+           :`<span class="ob-qty-ask">${fQ(entry.qty,S.obChain)}</span><span class="ob-price-ask">$${entry.price.toFixed(2)}</span><div class="ob-bar ask-bar" style="width:${w}%"></div>`}
     </div>`;
-  }).join('') || '<div class="ob-row" style="justify-content:center;color:var(--text2);font-size:11px">無符合掛單</div>';
-
-  const askHTML = ob.asks.slice(0,20).map(a => {
-    const w = (a.total/maxAskTotal*100).toFixed(1);
-    const whale = a.total >= S.threshold*3;
-    return `<div class="ob-row${whale?' whale-ob':''}">
-      <span class="ob-qty-ask">${fmtQty(a.qty,S.obChain)}</span>
-      <span class="ob-price-ask">${a.price.toFixed(2)}</span>
-      <div class="ob-bar ask-bar" style="width:${w}%"></div>
-    </div>`;
-  }).join('') || '<div class="ob-row" style="justify-content:center;color:var(--text2);font-size:11px">無符合掛單</div>';
-
-  document.getElementById('bid-rows').innerHTML = bidHTML;
-  document.getElementById('ask-rows').innerHTML = askHTML;
-  document.getElementById('bid-count').textContent = ob.bids.length;
-  document.getElementById('ask-count').textContent = ob.asks.length;
-
-  const totalBid = ob.bids.reduce((s,x)=>s+x.total,0);
-  const totalAsk = ob.asks.reduce((s,x)=>s+x.total,0);
-  const total = totalBid + totalAsk || 1;
-  const bidPct = (totalBid/total*100).toFixed(1);
-
-  document.getElementById('pressure-bid').style.width = bidPct+'%';
-  document.getElementById('bid-wall-val').textContent = '買壓 $'+fmtM(totalBid);
-  document.getElementById('ask-wall-val').textContent = '賣壓 $'+fmtM(totalAsk);
-
-  const topBid = ob.bids[0]?.price || 0;
-  const topAsk = ob.asks[0]?.price || ob.asks[ob.asks.length-1]?.price || 0;
-  document.getElementById('ob-bid-top').textContent = '最高買: $'+topBid.toFixed(2);
-  document.getElementById('ob-ask-top').textContent = '最低賣: $'+topAsk.toFixed(2);
-  const spread = topBid && topAsk ? ((topAsk-topBid)/topBid*100).toFixed(3)+'%' : '---';
-  document.getElementById('ob-spread').textContent = '價差: '+spread;
+  };
+  const noData='<div class="ob-row" style="justify-content:center;color:var(--text2);font-size:11px;padding:12px">無符合掛單</div>';
+  document.getElementById('bid-rows').innerHTML=ob.bids.slice(0,20).map(x=>row(x,'bid')).join('')||noData;
+  document.getElementById('ask-rows').innerHTML=ob.asks.slice(0,20).map(x=>row(x,'ask')).join('')||noData;
+  document.getElementById('bid-count').textContent=ob.bids.length;
+  document.getElementById('ask-count').textContent=ob.asks.length;
+  const tb=ob.bids.reduce((s,x)=>s+x.total,0),ta=ob.asks.reduce((s,x)=>s+x.total,0),tt=tb+ta||1;
+  document.getElementById('pressure-bid').style.width=(tb/tt*100).toFixed(1)+'%';
+  document.getElementById('bid-wall-val').textContent='買壓 $'+fM(tb);
+  document.getElementById('ask-wall-val').textContent='賣壓 $'+fM(ta);
+  const topB=ob.bids[0]?.price||0,topA=ob.asks[0]?.price||0;
+  document.getElementById('ob-bid-top').textContent='最高買: $'+topB.toFixed(2);
+  document.getElementById('ob-ask-top').textContent='最低賣: $'+topA.toFixed(2);
+  document.getElementById('ob-spread').textContent='價差: '+(topB&&topA?((topA-topB)/topB*100).toFixed(3)+'%':'---');
 }
 
-function renderObAlerts() {
-  const el = document.getElementById('ob-alert-list');
-  if(!S.obAlerts.length) return;
-  el.innerHTML = S.obAlerts.slice(0,50).map(a => `
-    <div class="alert-row">
-      <div class="alert-dot" style="background:${a.side==='bid'?'var(--green)':'var(--red)'}"></div>
-      <div class="alert-body">
-        <div class="alert-title">${a.side==='bid'?'買單':'賣單'} · ${a.chain}</div>
-        <div class="alert-sub">$${a.price.toFixed(2)} × ${fmtQty(a.qty,a.chain)}</div>
-      </div>
-      <div class="alert-right">
-        <div class="alert-val">$${fmtM(a.total)}</div>
-        <div class="alert-time">${timeAgo(a.ts)}</div>
-      </div>
-    </div>`).join('');
-}
-
-function obChain(c) {
-  S.obChain = c;
-  document.querySelectorAll('#page2 .sec-hd .seg-btn').forEach((b,i) => {
-    b.classList.toggle('active', ['BTC','ETH'][i] === c);
+// ── ALERT TIMELINE CHART ──
+function drawChart(){
+  const canvas=document.getElementById('alertChart');
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||300,H=160;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr);
+  ctx.fillStyle='#12121a';ctx.fillRect(0,0,W,H);
+  const now=Date.now(),WIN=10*60*1000;
+  const pts=S.obAlerts.filter(a=>a.chain===S.obChain&&now-a.ts<=WIN);
+  const PAD={l:58,r:8,t:12,b:24};
+  const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=.5;
+  for(let i=0;i<=4;i++){const y=PAD.t+cH*i/4;ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(W-PAD.r,y);ctx.stroke();}
+  for(let i=0;i<=5;i++){const x=PAD.l+cW*i/5;ctx.beginPath();ctx.moveTo(x,PAD.t);ctx.lineTo(x,PAD.t+cH);ctx.stroke();}
+  // Time labels
+  ctx.fillStyle='rgba(144,144,176,.65)';ctx.font='9px SF Mono,monospace';ctx.textAlign='center';
+  for(let i=0;i<=5;i++){
+    const t=new Date(now-WIN*(1-i/5));
+    ctx.fillText(t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0'),PAD.l+cW*(i/5),H-5);
+  }
+  if(!pts.length){
+    ctx.fillStyle='rgba(144,144,176,.35)';ctx.font='12px -apple-system,sans-serif';ctx.textAlign='center';
+    ctx.fillText('等待大額掛單...',W/2,H/2);return;
+  }
+  const prices=pts.map(p=>p.price);
+  const pMin=Math.min(...prices),pMax=Math.max(...prices);
+  const pr=pMax-pMin||pMin*0.002,pLo=pMin-pr*.2,pHi=pMax+pr*.2;
+  // Y labels
+  ctx.fillStyle='rgba(144,144,176,.65)';ctx.font='9px SF Mono,monospace';ctx.textAlign='right';
+  for(let i=0;i<=4;i++){
+    const p=pLo+(pHi-pLo)*(1-i/4);
+    ctx.fillText('$'+p.toFixed(0),PAD.l-3,PAD.t+cH*(i/4)+3);
+  }
+  const toXY=pt=>({
+    x:PAD.l+cW*((pt.ts-(now-WIN))/WIN),
+    y:PAD.t+cH*(1-(pt.price-pLo)/(pHi-pLo))
   });
-  renderOrderBook();
-}
-
-function updateThreshold(v) {
-  S.threshold = parseInt(v) * 1000;
-  document.getElementById('threshold-label').textContent = v >= 1000 ? '$'+v/1000+'M' : '$'+v+'K';
-}
-
-// ═══════════════════════════════════════════════════════
-// TRUMP MONITOR
-// ═══════════════════════════════════════════════════════
-async function loadTrumpData() {
-  const btn = document.getElementById('trump-refresh');
-  btn.classList.add('spinning');
-  await Promise.all([loadTrumpWallets(), loadTrumpNews()]);
-  btn.classList.remove('spinning');
-}
-
-async function loadTrumpWallets() {
-  renderWallets();
-  // Also fetch live balances for each wallet
-  for(const w of S.wallets) {
-    try {
-      let bal = null;
-      if(w.chain === 'ETH' && S.keys.etherscan) {
-        const r = await fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${w.address}&tag=latest&apikey=${S.keys.etherscan}`);
-        const j = await r.json();
-        bal = parseFloat(j.result) / 1e18;
-      } else if(w.chain === 'BTC' && S.keys.blockchair) {
-        const r = await fetch(`https://api.blockchair.com/bitcoin/dashboards/address/${w.address}?key=${S.keys.blockchair}`);
-        const j = await r.json();
-        bal = j.data?.[w.address]?.address?.balance / 1e8;
-      }
-      if(bal !== null) {
-        w.balance = bal;
-        w.balanceUpdated = Date.now();
-      }
-    } catch(e){}
+  // Price line
+  const sorted=[...pts].sort((a,b)=>a.ts-b.ts);
+  if(sorted.length>1){
+    ctx.strokeStyle='rgba(108,99,255,.25)';ctx.lineWidth=1;ctx.beginPath();
+    sorted.forEach((p,i)=>{const{x,y}=toXY(p);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
   }
-  renderWallets();
+  // Dots
+  const wThr=S.thr[S.obChain]*3;
+  pts.forEach(pt=>{
+    const{x,y}=toXY(pt);
+    const isW=pt.total>=wThr;
+    const col=isW?'#ffa502':pt.side==='bid'?'#00d084':'#ff4757';
+    const r=isW?6:pt.total>=S.thr[S.obChain]*2?4:3;
+    if(isW){ctx.beginPath();ctx.arc(x,y,r+3,0,Math.PI*2);ctx.fillStyle=col+'33';ctx.fill();}
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+  });
 }
 
-function renderWallets() {
-  const el = document.getElementById('trump-wallet-list');
-  if(!S.wallets.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">👁</div><div class="empty-title">尚無監控錢包</div><div class="empty-desc">在「設定」頁面新增地址</div></div>`;
-    return;
-  }
-  el.innerHTML = S.wallets.map((w,i) => `
-    <div class="card-row" onclick="openExplorer('${w.address}','${w.chain}')">
-      <div class="wallet-icon ${w.chain==='BTC'?'btc-icon':'eth-icon'}">${w.chain}</div>
-      <div class="wallet-info">
-        <div class="wallet-name">${w.label || truncate(w.address,20)}</div>
-        <div class="wallet-addr" onclick="copyAddr('${w.address}',event)">${truncate(w.address,24)} 📋</div>
-        ${w.builtin ? '<span class="badge badge-purple" style="display:inline-block;margin-top:3px;font-size:9px">公開報導</span>':
-          '<span class="badge badge-amber" style="display:inline-block;margin-top:3px;font-size:9px">自訂</span>'}
+function renderAlerts(){
+  const el=document.getElementById('ob-alert-list');
+  const pts=S.obAlerts.filter(a=>a.chain===S.obChain).slice(0,60);
+  if(!pts.length){el.innerHTML='<div class="empty"><div class="empty-icon">🐋</div><div class="empty-title">等待大額掛單</div><div class="empty-desc">超過門檻的掛單將即時出現</div></div>';return;}
+  const wThr=S.thr[S.obChain]*3;
+  el.innerHTML=pts.map(a=>{
+    const isW=a.total>=wThr;
+    const sc=a.side==='bid'?'var(--green)':'var(--red)';
+    const dc=isW?'var(--amber)':sc;
+    return`<div class="alr">
+      <div class="alr-dot" style="background:${dc};${isW?'box-shadow:0 0 6px var(--amber)':''}"></div>
+      <div class="alr-price">
+        <div class="alr-price-main" style="color:${isW?'var(--amber)':sc}">$${a.price.toFixed(2)}</div>
+        <div class="alr-price-sub">${fQ(a.qty,a.chain)} · ${a.side==='bid'?'買單':'賣單'}${isW?' 🐋':''}</div>
       </div>
-      <div class="wallet-meta">
-        ${w.balance != null ? `<div class="wallet-bal">${w.balance.toFixed(4)}</div>` : '<div class="wallet-bal" style="color:var(--text2)">---</div>'}
-        ${w.balance != null ? `<div class="wallet-time">$${fmtM(w.balance * S.prices[w.chain])}</div>`:''}
-        ${w.builtin ? '' : `<button onclick="removeWallet(${i},event)" style="margin-top:4px;font-size:10px;background:rgba(255,71,87,.15);color:var(--red);border:none;border-radius:6px;padding:3px 8px;cursor:pointer">移除</button>`}
-      </div>
-    </div>`).join('');
-}
-
-async function loadTrumpNews() {
-  const el = document.getElementById('trump-news-list');
-  if(!S.keys.newsapi) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">📰</div><div class="empty-title">需要 NewsAPI Key</div><div class="empty-desc">在設定頁面填入 newsapi.org 的免費 Key<br>即可啟用新聞追蹤</div></div>`;
-    return;
-  }
-  try {
-    const q = encodeURIComponent('Trump Jr crypto bitcoin ethereum wallet');
-    const r = await fetch(`https://newsapi.org/v2/everything?q=${q}&sortBy=publishedAt&language=en&pageSize=20&apiKey=${S.keys.newsapi}`);
-    const j = await r.json();
-    if(j.status !== 'ok') throw new Error(j.message);
-    el.innerHTML = (j.articles||[]).map(a => `
-      <a href="${a.url}" target="_blank" class="news-row" style="display:block;text-decoration:none;color:inherit">
-        <div class="news-meta">
-          <span class="news-src">${a.source?.name||'未知'}</span>
-          <span class="news-time">${timeAgo(new Date(a.publishedAt).getTime())}</span>
-        </div>
-        <div class="news-title">${a.title||''}</div>
-        <div class="news-snippet">${a.description||''}</div>
-      </a>`).join('');
-  } catch(e) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">載入失敗</div><div class="empty-desc">${e.message}</div></div>`;
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-// WHALE TRACKER
-// ═══════════════════════════════════════════════════════
-async function loadWhales() {
-  const btn = document.getElementById('whale-refresh');
-  btn.classList.add('spinning');
-  const chain = S.whaleChain;
-  document.getElementById('whale-list').innerHTML = '<div class="card-row" style="justify-content:center;padding:30px"><div class="spinner"></div></div>';
-  try {
-    const minBal = chain === 'BTC' ? '100000000000' : '100000000000000000000';
-    const keyParam = S.keys.blockchair ? `&key=${S.keys.blockchair}` : '';
-    const url = `https://api.blockchair.com/${chain==='BTC'?'bitcoin':'ethereum'}/addresses?q=balance(${minBal}..)&s=balance(desc)&limit=100${keyParam}`;
-    const r = await fetch(url);
-    const j = await r.json();
-    const data = j.data || [];
-    const div = chain==='BTC' ? 1e8 : 1e18;
-    const supply = chain==='BTC' ? 21000000 : 120000000;
-    S.whales[chain] = data.map((item,i) => ({
-      rank: i+1,
-      address: item.address,
-      balance: item.balance / div,
-      pct: (item.balance / div) / supply * 100,
-      label: knownLabel(item.address, chain),
-    }));
-    renderWhales();
-  } catch(e) {
-    document.getElementById('whale-list').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">載入失敗</div><div class="empty-desc">${e.message}</div></div>`;
-  }
-  btn.classList.remove('spinning');
-}
-
-function renderWhales() {
-  const chain = S.whaleChain;
-  const list = S.whales[chain];
-  const price = S.prices[chain];
-  const supply = chain==='BTC' ? 21000000 : 120000000;
-  const total = list.reduce((s,w)=>s+w.balance,0);
-
-  document.getElementById('wm-total').textContent = fmtNum(total)+' '+chain;
-  document.getElementById('wm-pct').textContent = (total/supply*100).toFixed(1)+'%';
-  document.getElementById('wm-usd').textContent = '$'+fmtM(total*price);
-  document.getElementById('whale-subtitle').textContent = `前 ${list.length} 大 · 共 ${(total/supply*100).toFixed(1)}% 供應量`;
-
-  document.getElementById('whale-list').innerHTML = list.slice(0,100).map(w => {
-    const rc = w.rank===1?'rank-1':w.rank<=5?'rank-2-5':w.rank<=20?'rank-6-20':'rank-rest';
-    return `
-    <div class="card-row" onclick="openExplorer('${w.address}','${chain}')">
-      <div class="rank-badge ${rc}">#${w.rank}</div>
-      <div class="whale-info">
-        <div class="whale-name">${w.label || '未知地址'}</div>
-        <div class="whale-addr-sm" onclick="copyAddr('${w.address}',event)">${truncate(w.address,28)} 📋</div>
-      </div>
-      <div class="whale-right">
-        <div class="whale-bal">${fmtNum(w.balance)} ${chain}</div>
-        <div class="whale-usd">$${fmtM(w.balance*price)}</div>
-        <div class="whale-pct">${w.pct.toFixed(3)}%</div>
+      <div class="alr-right">
+        <div class="alr-usd">$${fM(a.total)}</div>
+        <div class="alr-time">${tAgo(a.ts)}</div>
+        <div class="alr-badge" style="background:${a.chain==='BTC'?'rgba(247,147,26,.2)':'rgba(98,126,234,.2)'};color:${a.chain==='BTC'?'#f7931a':'#627eea'}">${a.chain}</div>
       </div>
     </div>`;
   }).join('');
 }
 
-function whaleChain(c) {
-  S.whaleChain = c;
-  document.querySelectorAll('#page1 .seg-btn').forEach((b,i) => b.classList.toggle('active',['BTC','ETH'][i]===c));
-  if(S.whales[c].length) renderWhales();
-  else loadWhales();
+function obChain(c){
+  S.obChain=c;
+  document.querySelectorAll('#page2 .sec-hd .seg-btn').forEach((b,i)=>b.classList.toggle('active',['BTC','ETH'][i]===c));
+  updateSlider(c);renderOB();renderAlerts();if(S.obViewMode==='alerts') drawChart();
+}
+function updateSlider(chain){
+  const s=document.getElementById('thr-slider'),v=Math.round(S.thr[chain]/1000);
+  s.min=chain==='BTC'?90:75;s.max=2000;s.value=v;
+  updateThr(v);
+}
+function updateThr(v){
+  const vk=parseInt(v);S.thr[S.obChain]=vk*1000;
+  document.getElementById('thr-label').textContent=vk>=1000?'$'+(vk/1000).toFixed(1)+'M':'$'+vk+'K';
 }
 
-// ═══════════════════════════════════════════════════════
-// SETTINGS
-// ═══════════════════════════════════════════════════════
-function saveKey(k, v) { S.keys[k] = v; ls('key_'+k, v); }
-function setAddChain(c) {
-  S.addChain = c;
-  document.getElementById('add-btc-btn').classList.toggle('active', c==='BTC');
-  document.getElementById('add-eth-btn').classList.toggle('active', c==='ETH');
+// ── TRUMP MONITOR ──
+async function loadTrumpData(){
+  const btn=document.getElementById('trump-refresh');btn.classList.add('spinning');
+  await loadTrumpWallets();btn.classList.remove('spinning');
 }
-function addCustomWallet() {
-  const addr = document.getElementById('s-addr').value.trim();
-  const label = document.getElementById('s-label').value.trim();
-  if(!addr) return;
-  if(S.wallets.find(w=>w.address===addr)) return showToast('已存在');
-  S.wallets.push({ address:addr, label:label||truncate(addr,16), chain:S.addChain });
-  ls('wallets', JSON.stringify(S.wallets));
-  document.getElementById('s-addr').value = '';
-  document.getElementById('s-label').value = '';
+async function loadTrumpWallets(){
   renderWallets();
-  showToast('已新增');
-}
-function removeWallet(i, e) {
-  e.stopPropagation();
-  if(S.wallets[i]?.builtin) return;
-  S.wallets.splice(i,1);
-  ls('wallets', JSON.stringify(S.wallets));
+  for(const w of S.wallets){
+    try{
+      if(w.chain==='ETH'&&S.keys.etherscan){
+        const[br,tr]=await Promise.all([
+          fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${w.address}&tag=latest&apikey=${S.keys.etherscan}`).then(r=>r.json()),
+          fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=${w.address}&startblock=0&endblock=99999999&page=1&offset=5&sort=desc&apikey=${S.keys.etherscan}`).then(r=>r.json())
+        ]);
+        w.balance=+br.result/1e18;
+        w.txs=(tr.result||[]).slice(0,5).map(t=>({hash:t.hash,value:+t.value/1e18,ts:+t.timeStamp*1000,isIn:t.to.toLowerCase()===w.address.toLowerCase()}));
+      } else if(w.chain==='BTC'){
+        const kp=S.keys.blockchair?`?key=${S.keys.blockchair}`:'';
+        const j=await fetch(`https://api.blockchair.com/bitcoin/dashboards/address/${w.address}${kp}`).then(r=>r.json());
+        w.balance=j.data?.[w.address]?.address?.balance/1e8;
+        const rawTxs=j.data?.[w.address]?.transactions||[];
+        w.txs=rawTxs.slice(0,5).map(h=>({hash:h,value:null,ts:null,isIn:null}));
+      }
+      w.ts=Date.now();
+    }catch(e){}
+    await sleep(400);
+  }
   renderWallets();
 }
 
-// ═══════════════════════════════════════════════════════
-// UTILITIES
-// ═══════════════════════════════════════════════════════
-function ls(k, v) {
-  if(v===undefined) return localStorage.getItem(k);
-  localStorage.setItem(k, v);
-}
-function truncate(s, n) {
-  if(!s) return '';
-  if(s.length<=n) return s;
-  const h=(n-3)>>1;
-  return s.slice(0,h)+'...'+s.slice(-h);
-}
-function fmtM(n) {
-  if(!n) return '0';
-  if(n>=1e9) return (n/1e9).toFixed(2)+'B';
-  if(n>=1e6) return (n/1e6).toFixed(2)+'M';
-  if(n>=1e3) return (n/1e3).toFixed(1)+'K';
-  return n.toFixed(2);
-}
-function fmtNum(n) { return n ? n.toFixed(2) : '0'; }
-function fmtQty(q, chain) {
-  if(chain==='BTC') return q.toFixed(4)+' BTC';
-  return q.toFixed(3)+' ETH';
-}
-function timeAgo(ts) {
-  const s = Math.floor((Date.now()-ts)/1000);
-  if(s<60) return s+'秒前';
-  if(s<3600) return Math.floor(s/60)+'分前';
-  if(s<86400) return Math.floor(s/3600)+'時前';
-  return Math.floor(s/86400)+'天前';
-}
-function copyAddr(addr, e) {
-  if(e) e.stopPropagation();
-  navigator.clipboard?.writeText(addr).then(()=>showToast('已複製')).catch(()=>showToast('複製失敗'));
-}
-function showToast(msg) {
-  const t = document.getElementById('copy-toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 1800);
-}
-function openExplorer(addr, chain) {
-  const url = chain==='BTC'
-    ? `https://blockchair.com/bitcoin/address/${addr}`
-    : `https://etherscan.io/address/${addr}`;
-  window.open(url,'_blank');
-}
-function knownLabel(addr, chain) {
-  const labels = {
-    BTC: {
-      '1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ':'Binance 冷錢包',
-      '34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo':'Binance',
-      '3LYJfcfHPXYJreMsASk2jkn69LWEYKzexb':'Kraken',
-      '1FeexV6bAHb8ybZjqQMjJrcCrHGW9sb6uF':'Satoshi (未動)',
-      'bc1qgdjqv0av3q56jvd82tkdjpy7gdp9ut8tlqmgrpmv24sq90ecnvqqjwvw97':'Bitfinex',
-    },
-    ETH: {
-      '0xbe0eb53f46cd790cd13851d5eff43d12404d33e8':'Binance 7',
-      '0xf977814e90da44bfa03b6295a0616a897441acec':'Binance 8',
-      '0x47ac0fb4f2d84898e4d9e7b4dab3c24507a6d503':'Binance 冷錢包',
-      '0x28c6c06298d514db089934071355e5743bf21d60':'Binance 14',
-      '0x21a31ee1afc51d94c2efccaa2092ad1028285549':'Binance 15',
-      '0x9696f59e4d72e237be84ffd425dcad154bf96976':'Kraken',
-      '0xabea9132b05a70803a4e85094fd0e1800777fbef':'Bitfinex 2',
+function renderWallets(){
+  const el=document.getElementById('trump-wallet-list');
+  if(!S.wallets.length){el.innerHTML='<div class="card"><div class="empty"><div class="empty-icon">👁</div><div class="empty-title">尚無監控錢包</div><div class="empty-desc">在「設定」頁面新增地址</div></div></div>';return;}
+  el.innerHTML=S.wallets.map((w,i)=>{
+    const cc=w.chain==='BTC'?'#f7931a':'#627eea';
+    const cb=w.chain==='BTC'?'rgba(247,147,26,.15)':'rgba(98,126,234,.15)';
+    const price=S.prices[w.chain];
+    const usd=w.balance!=null?w.balance*price:null;
+    let txsH='<div style="padding:12px 14px;font-size:11px;color:var(--text2);text-align:center">'+
+      (!S.keys.etherscan&&w.chain==='ETH'?'需要 Etherscan Key 才能顯示金流':'載入金流中...')+
+      '</div>';
+    if(w.txs&&w.txs.length){
+      txsH=w.txs.map(t=>`<div class="wtx">
+        <div class="wtx-arrow ${t.isIn===null?'':''}${t.isIn===true?'wtx-in':t.isIn===false?'wtx-out':'wtx-in'}">${t.isIn===null?'·':t.isIn?'↓':'↑'}</div>
+        <div class="wtx-info">
+          <div class="wtx-hash" onclick="copyAddr('${t.hash}',event)">${trunc(t.hash,28)}</div>
+          <div class="wtx-time">${t.ts?tAgo(t.ts):'---'}</div>
+        </div>
+        <div class="wtx-amt ${t.isIn===true?'in':t.isIn===false?'out':''}">${t.value!=null?(t.isIn?'+':'-')+t.value.toFixed(4)+' '+w.chain:'---'}</div>
+      </div>`).join('');
     }
-  };
-  return labels[chain]?.[addr.toLowerCase()] || labels[chain]?.[addr] || null;
+    return`<div class="wcard">
+      <div class="wcard-hd">
+        <div class="wcard-icon" style="background:${cb};color:${cc}">${w.chain}</div>
+        <div style="flex:1;min-width:0">
+          <div class="wcard-name">${w.label||trunc(w.address,18)}</div>
+          <div class="wcard-addr" onclick="copyAddr('${w.address}',event)">${trunc(w.address,28)} 📋</div>
+        </div>
+        ${w.builtin?'<span class="badge badge-purple">公開報導</span>':'<span class="badge badge-amber">自訂</span>'}
+      </div>
+      <div class="wbal">
+        <div class="wbal-lbl">現在總額</div>
+        <div class="wbal-amt" style="color:${cc}">${w.balance!=null?w.balance.toFixed(4)+' '+w.chain:'---'}</div>
+        <div class="wbal-usd">${usd!=null?'≈ $'+fM(usd):w.chain==='BTC'||S.keys.etherscan?'載入中...':'需要 Etherscan Key'}</div>
+      </div>
+      <div class="wflow-title">最後 5 次金流</div>
+      ${txsH}
+      <div class="wacts">
+        <button class="wact" onclick="openExp('${w.address}','${w.chain}')">區塊鏈瀏覽器</button>
+        <button class="wact" onclick="openArk('${w.address}')">Arkham</button>
+        ${!w.builtin?`<button class="wact" style="color:var(--red)" onclick="rmWallet(${i})">移除</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-// REGISTER SERVICE WORKER
-// ═══════════════════════════════════════════════════════
-if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+async function loadNews(){
+  const el=document.getElementById('trump-news-list');
+  if(!S.keys.newsapi){el.innerHTML='<div class="empty"><div class="empty-icon">📰</div><div class="empty-title">需要 NewsAPI Key</div><div class="empty-desc">設定頁面填入免費 Key</div></div>';return;}
+  try{
+    const q=encodeURIComponent('Trump Jr crypto bitcoin wallet blockchain');
+    const j=await fetch(`https://newsapi.org/v2/everything?q=${q}&sortBy=publishedAt&language=en&pageSize=20&apiKey=${S.keys.newsapi}`).then(r=>r.json());
+    if(j.status!=='ok') throw new Error(j.message);
+    el.innerHTML=(j.articles||[]).map(a=>`<a href="${a.url}" target="_blank" style="display:block;text-decoration:none;color:inherit;padding:12px 14px;border-bottom:1px solid var(--border)">
+      <div style="display:flex;gap:8px;margin-bottom:6px;align-items:center">
+        <span style="font-size:10px;background:var(--bg3);padding:2px 7px;border-radius:20px;color:var(--text2)">${a.source?.name||'?'}</span>
+        <span style="font-size:10px;color:var(--text2);margin-left:auto">${tAgo(new Date(a.publishedAt).getTime())}</span>
+      </div>
+      <div style="font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px">${a.title||''}</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${a.description||''}</div>
+    </a>`).join('');
+  }catch(e){el.innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">載入失敗</div><div class="empty-desc">${e.message}</div></div>`;}
 }
 
-// START
+// ── WHALE ──
+async function loadWhales(){
+  const btn=document.getElementById('whale-refresh');btn.classList.add('spinning');
+  document.getElementById('whale-list').innerHTML='<div class="card-row" style="justify-content:center;padding:30px"><div class="spinner"></div></div>';
+  try{
+    const ch=S.whaleChain;
+    const minBal=ch==='BTC'?'100000000000':'100000000000000000000';
+    const kp=S.keys.blockchair?`&key=${S.keys.blockchair}`:'';
+    const url=`https://api.blockchair.com/${ch==='BTC'?'bitcoin':'ethereum'}/addresses?q=balance(${minBal}..)&s=balance(desc)&limit=100${kp}`;
+    const j=await fetch(url).then(r=>r.json());
+    const div=ch==='BTC'?1e8:1e18,sup=ch==='BTC'?21e6:120e6;
+    S.whales[ch]=(j.data||[]).map((item,i)=>({rank:i+1,address:item.address,balance:item.balance/div,pct:(item.balance/div)/sup*100,label:kLabel(item.address,ch)}));
+    renderWhales();
+  }catch(e){document.getElementById('whale-list').innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">載入失敗</div><div class="empty-desc">${e.message}</div></div>`;}
+  btn.classList.remove('spinning');
+}
+function renderWhales(){
+  const ch=S.whaleChain,list=S.whales[ch],price=S.prices[ch],sup=ch==='BTC'?21e6:120e6;
+  const total=list.reduce((s,w)=>s+w.balance,0);
+  document.getElementById('wm-total').textContent=fNum(total);
+  document.getElementById('wm-pct').textContent=(total/sup*100).toFixed(1)+'%';
+  document.getElementById('wm-usd').textContent='$'+fM(total*price);
+  document.getElementById('whale-subtitle').textContent=`前 ${list.length} 大 · ${(total/sup*100).toFixed(1)}% 供應量`;
+  document.getElementById('whale-list').innerHTML=list.slice(0,100).map(w=>{
+    const rc=w.rank===1?'rank-1':w.rank<=5?'rank-2-5':w.rank<=20?'rank-6-20':'rank-rest';
+    return`<div class="card-row" onclick="openExp('${w.address}','${ch}')">
+      <div class="rank-badge ${rc}">#${w.rank}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${w.label||'未知地址'}</div>
+        <div style="font-size:9px;font-family:var(--font-mono);color:var(--text2);margin-top:2px" onclick="copyAddr('${w.address}',event)">${trunc(w.address,28)} 📋</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:13px;font-weight:700;font-family:var(--font-mono)">${fNum(w.balance)} ${ch}</div>
+        <div style="font-size:10px;color:var(--text2)">$${fM(w.balance*price)}</div>
+        <div style="font-size:10px;color:var(--text2)">${w.pct.toFixed(3)}%</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function whaleChain(c){
+  S.whaleChain=c;
+  document.querySelectorAll('#page1 .seg-btn').forEach((b,i)=>b.classList.toggle('active',['BTC','ETH'][i]===c));
+  S.whales[c].length?renderWhales():loadWhales();
+}
+
+// ── SETTINGS ──
+function saveKey(k,v){S.keys[k]=v;ls('key_'+k,v);}
+function setAddChain(c){S.addChain=c;['btc','eth'].forEach(x=>document.getElementById('add-'+x+'-btn').classList.toggle('active',x===c.toLowerCase()));}
+function addWallet(){
+  const addr=document.getElementById('s-addr').value.trim(),label=document.getElementById('s-label').value.trim();
+  if(!addr) return;
+  if(S.wallets.find(w=>w.address===addr)) return toast('已存在');
+  S.wallets.push({address:addr,label:label||trunc(addr,16),chain:S.addChain});
+  ls('wallets',JSON.stringify(S.wallets));
+  document.getElementById('s-addr').value='';document.getElementById('s-label').value='';
+  renderWallets();toast('已新增');
+}
+function rmWallet(i){if(S.wallets[i]?.builtin) return;S.wallets.splice(i,1);ls('wallets',JSON.stringify(S.wallets));renderWallets();}
+
+// ── UTILS ──
+function ls(k,v){if(v===undefined) return localStorage.getItem(k);localStorage.setItem(k,v);}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function trunc(s,n){if(!s||s.length<=n) return s||'';const h=(n-3)>>1;return s.slice(0,h)+'...'+s.slice(-h);}
+function fM(n){if(!n) return '0';if(n>=1e9) return (n/1e9).toFixed(2)+'B';if(n>=1e6) return (n/1e6).toFixed(2)+'M';if(n>=1e3) return (n/1e3).toFixed(1)+'K';return n.toFixed(0);}
+function fNum(n){return n?(n>=1000?n.toFixed(0):n.toFixed(2)):'0';}
+function fQ(q,ch){return ch==='BTC'?q.toFixed(4)+' BTC':q.toFixed(3)+' ETH';}
+function tAgo(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60) return s+'秒前';if(s<3600) return Math.floor(s/60)+'分前';if(s<86400) return Math.floor(s/3600)+'時前';return Math.floor(s/86400)+'天前';}
+function copyAddr(addr,e){if(e){e.stopPropagation();e.preventDefault();}navigator.clipboard?.writeText(addr).then(()=>toast('已複製')).catch(()=>{});}
+function toast(msg){const t=document.getElementById('copy-toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800);}
+function openExp(addr,ch){window.open(ch==='BTC'?`https://blockchair.com/bitcoin/address/${addr}`:`https://etherscan.io/address/${addr}`,'_blank');}
+function openArk(addr){window.open(`https://platform.arkm.com/address/${addr}`,'_blank');}
+function kLabel(addr,ch){
+  const L={BTC:{'1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ':'Binance 冷錢包','34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo':'Binance','3LYJfcfHPXYJreMsASk2jkn69LWEYKzexb':'Kraken','1FeexV6bAHb8ybZjqQMjJrcCrHGW9sb6uF':'Satoshi (未動)'},
+   ETH:{'0xbe0eb53f46cd790cd13851d5eff43d12404d33e8':'Binance 7','0xf977814e90da44bfa03b6295a0616a897441acec':'Binance 8','0x47ac0fb4f2d84898e4d9e7b4dab3c24507a6d503':'Binance 冷錢包','0x28c6c06298d514db089934071355e5743bf21d60':'Binance 14','0x9696f59e4d72e237be84ffd425dcad154bf96976':'Kraken','0xabea9132b05a70803a4e85094fd0e1800777fbef':'Bitfinex 2'}};
+  return L[ch]?.[addr.toLowerCase()]||L[ch]?.[addr]||null;
+}
+window.addEventListener('resize',()=>{if(S.obViewMode==='alerts') drawChart();});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 init();
 </script>
 </body>
